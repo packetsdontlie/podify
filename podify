@@ -1,0 +1,98 @@
+#!/bin/bash
+# dependencies:
+# curl, textutil, say, lame, basename, dirname
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+IFS='
+'
+show_usage() {
+	echo "$0"
+	echo "-------------------------------------------------------------------"
+	echo "Take content from the URL and speak it or save it"
+	echo ""
+	echo "      -u for URL (required)"
+	echo "      -v for voice (optional)"
+	echo "      -s for saving to file (optional)"
+	echo "      -c for conversion from AIFF to MP3 via lame (optional)"
+	echo "      -r for rate (optional, 200 is fast, 300 is very fast)"
+	echo "      -i for listing the inventory of English voices (exclusive)"
+	echo ""
+	echo "   $0 -u http://example.com -> will speak the site"
+	echo "   $0 -u http://example.com -v Samantha -> will speak the site with the Samantha voice"
+	echo "   $0 -u http://example.com -v Samantha -r 300 -> will speak the site quickly with the Samantha voice"
+	echo "   $0 -u http://example.com -v Samantha -s /path/to/file -> save as AIFF"
+	echo "   $0 -u http://example.com -v Samantha -s /path/to/file -c yes -> save as MP3 via lame"
+	echo "   $0 -l yes -> will list voices"
+	echo ""
+}
+
+throw() {
+	echo "${*}"
+	exit 1
+}
+
+flight_check() {
+	which basename > /dev/null || throw "basename not found"
+	which dirname > /dev/null || throw "dirname not found"
+	which curl > /dev/null || throw "cURL not found"
+	which textutil > /dev/null || throw "textutil not found, may not be a Mac"
+	which say > /dev/null || throw "say not found, may not be a mac"
+	[ -z "${URL}" ] && throw "URL not supplied"
+	ACTOR=Bruce # default voice, should be on all OSX machines
+	[ -z "${VOICE}" ] || ACTOR=$VOICE
+	SPEED=180 # default rate
+	[ -z "${RATE}" ] || SPEED=$RATE
+	[ -z "${SAVE}" ] && read
+	[ -z "${SAVE}" ] || set_file
+	[ -z "${SAVE}" ] || save
+	( [ ! -z "${CONVERT}" ] && [ ! -z "${SAVE}" ] ) && convert
+}
+
+list_voices() {
+	which say > /dev/null || throw "say not found, may not be a mac"
+	say -v '?' | grep 'en_'
+	exit 0
+}
+
+read() {
+	curl --silent "${URL}" | 
+	textutil -convert txt -stdin -stdout | 
+	say -v ${ACTOR} -r ${SPEED} -f -
+}
+
+set_file() {
+	LHS=$(dirname ${SAVE})
+	RHS=$(basename ${SAVE})
+	AIFF="${LHS}/podify.${RHS}.aiff"
+	MP3="${LHS}/podify.${RHS}.mp3"
+}
+
+save() {
+	curl --silent "${URL}" | 
+	textutil -convert txt -stdin -stdout | 
+	say -v ${ACTOR} -f - -o ${AIFF}
+}
+
+convert() {
+	which lame > /dev/null || throw "cannot find lame, cannot convert"
+	lame --preset medium ${AIFF} ${MP3} && rm ${AIFF}
+}
+
+script_exec() {
+	flight_check
+}
+
+while getopts ":u:v:s:l:c:r:" options
+do
+   case $options in
+	u ) URL="${OPTARG}";;
+	v ) VOICE="${OPTARG}";;
+	s ) SAVE="${OPTARG}";;
+	c ) CONVERT="${OPTARG}";;
+	r ) RATE="${OPTARG}";;
+	l ) list_voices;;
+	* ) show_usage
+		exit 0;;
+   esac
+done
+
+script_exec
