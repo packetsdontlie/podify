@@ -1,2 +1,10 @@
 # podify
 an OS X helper script to take a web page and speak it now or save to mp3
+
+## Usage
+* Will use your system default voice: `/usr/local/bin/podify -u http://example.com`   
+* Will speak the site with the Samantha voice `/usr/local/bin/podify -u http://example.com -v Samantha`  
+* Will speak the site quickly with the Samantha voice, adjusting -r changes speed `/usr/local/bin/podify -u http://example.com -v Samantha -r 300`  
+* Will save as AIFF `/usr/local/bin/podify -u http://example.com -v Samantha -s /path/to/file`  
+* Will save as MP3 with lame installed `/usr/local/bin/podify -u http://example.com -v Samantha -s /path/to/file -c yes`  
+* Will list your voices installed  `/usr/local/bin/podify -l yes`  
