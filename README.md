@@ -1,5 +1,5 @@
 # podify
-A MacOS helper script to take a web page and speak it now or save to mp3
+A MacOS helper script to take a web page and speak it now or save it for later (aiff, mp3)
 
 ## Usage
 * Will use your system default voice: `/usr/local/bin/podify -u http://example.com`   
@@ -11,5 +11,6 @@ A MacOS helper script to take a web page and speak it now or save to mp3
 
 ## Notes
 * Dependent on the voices you have installed for MacOS
+* Requires `curl`
 * Conversion to MP3 requires the installation of `lame` which you can do via a package manager like brew
 * Each voice in MacOS has a slightly different cadence, you may need to experiment to find the best value for `-r`
