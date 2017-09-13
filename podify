@@ -69,7 +69,7 @@ set_file() {
 save() {
 	curl --silent "${URL}" | 
 	textutil -convert txt -stdin -stdout | 
-	say -v ${ACTOR} -f - -o ${AIFF}
+	say -v ${ACTOR} -r ${SPEED} -f - -o ${AIFF}
 }
 
 convert() {
