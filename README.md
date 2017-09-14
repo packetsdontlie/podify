@@ -15,8 +15,10 @@ A MacOS helper script to take a web page and speak it now or save it for later (
 * Conversion to MP3 requires the installation of `lame` which you can do via a package manager like brew
 * Each voice in MacOS has a slightly different cadence, you may need to experiment to find the best value for `-r`
 
-## Voices
+## Install
+Download podify.  Change the permissions to execute.
 
+## Voices
 You can use `podify` to list your system voices, for example:
 
 `plank:vault b$ podify -l yes`   
