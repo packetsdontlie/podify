@@ -48,6 +48,7 @@ flight_check() {
 }
 
 list_voices() {
+	# this check is duplicated with flight_check since this function can skip flight_check
 	which say > /dev/null || throw "say not found, may not be a mac"
 	say -v '?' | grep 'en_'
 	exit 0
